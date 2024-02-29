@@ -29,7 +29,8 @@ class Customer(UserBase):
     id: int
     first_name: str
     last_name: str
-    zipcode: int
+    zipcode: str
+
     phone: str
     city: str
     
