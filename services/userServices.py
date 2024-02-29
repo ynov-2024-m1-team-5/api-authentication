@@ -31,7 +31,6 @@ def customer_create(db: Session, customer: schemas.CustomerCreate):
             detail="Email already exists",
         )
     else:
-        print("Creating new user...")
         hashedPassword = get_password_hash(db_customer.password)
         userLogin = models.UserLogin(customer_id=db_customer.id, hashed_password=hashedPassword)
         db.add(userLogin)

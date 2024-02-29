@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from services import userServices as users_services
-from services import authentificationServices as auth_services
+import services.authServices as auth_services
 from sqlalchemy.orm import Session
 from config.database import SessionLocal, engine
 from models.users import Base
