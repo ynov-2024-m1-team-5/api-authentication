@@ -2,7 +2,7 @@ from sqlalchemy.orm import Session
 import schemas.users as schemas
 import models.users as models
 from fastapi import HTTPException
-from .utils import *
+from services.utils import *
 
 def get_all_customers(db: Session):
     return db.query(models.Customer).all()
