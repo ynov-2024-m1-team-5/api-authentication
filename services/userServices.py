@@ -4,6 +4,7 @@ import models.users as models
 from fastapi import HTTPException
 from services.utils import *
 
+
 def get_all_customers(db: Session):
     return db.query(models.Customer).all()
 
@@ -11,14 +12,16 @@ def get_customer_by_id(db: Session, customer_id: int):
     return db.query(models.Customer).filter_by(id=customer_id).first()
 
 def get_all_administrators(db: Session):
-    administrators = db.query(models.Administrator).all()
-    return {
-        "len": len(administrators),
-        "customers": administrators
-    }
+    return db.query(models.Administrator).all()
 
 def get_administrator_by_id(db: Session, administrator_id: int):
     return db.query(models.Administrator).filter_by(id=administrator_id).first()
+
+def get_all_usersLogin(db: Session):
+    return db.query(models.UserLogin).all()
+
+def get_userLogin_by_id(db: Session, userLogin:int):
+    return db.query(models.UserLogin).filter_by(id=userLogin).first()
 
 def customer_create(db: Session, customer: schemas.CustomerCreate):
     db_customer = models.Customer(**customer.model_dump())
@@ -28,12 +31,16 @@ def customer_create(db: Session, customer: schemas.CustomerCreate):
             detail="Email already exists",
         )
     else:
-        print("Creating new user...")
+        db.add(db_customer)
+        db.commit()
         hashedPassword = get_password_hash(db_customer.password)
-        userLogin = models.UserLogin(customer_id=db_customer.id, hashed_password=hashedPassword)
+        userLogin = models.UserLogin(
+            customer_id=db_customer.id, 
+            hashed_password=hashedPassword)
         db.add(userLogin)
         db.commit()
         db.refresh(userLogin)
+
         return {"success": True}
 
 

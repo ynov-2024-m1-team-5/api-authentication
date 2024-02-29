@@ -7,11 +7,14 @@ class BaseModelExtend(BaseModel):
 class UserBase(BaseModelExtend):
     email: str
 
+class UserLogin(UserBase):
+    id : int
+    
 class CustomerCreate(UserBase):
     first_name: str
     last_name: str
     address: str
-    zipcode: int
+    zipcode: str
     phone: str
     city: str
     password: str
