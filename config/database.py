@@ -1,10 +1,9 @@
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.ext.automap import automap_base
+from config.settings import settings
 
-
-DB_URL="postgresql://root:naLjElRI73WI6cCi5NSCio1M59793ro2@dpg-cn2fjhv109ks7396ajug-a.oregon-postgres.render.com/db_my_store_lb2z"
-engine = create_engine(DB_URL)
+engine = create_engine(settings.DB_URL)
 
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
