@@ -11,4 +11,5 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
 app.include_router(usersRoutes, prefix="/api/v1")
