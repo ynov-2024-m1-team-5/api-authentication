@@ -23,21 +23,20 @@ def get_all_customers(db: Session = Depends(get_db)):
     return users_services.get_all_customers(db)
 
 @usersRoutes.get(f"{base}/customers"+"/{id}")
-def get_customer_by_id(db: Session = Depends(get_db)):
-    return users_services.get_customer_by_id(db)
+def get_customer_by_id(id:int, db: Session = Depends(get_db)):
+    return users_services.get_customer_by_id(db, id)
 
 @usersRoutes.get(f"{base}/administrators/")
 def get_all_administrators(db: Session = Depends(get_db)):
     return users_services.get_all_administrators(db)
 
 @usersRoutes.get(f"{base}/administrators"+"/{id}")
-def get_administrator_by_id(db: Session = Depends(get_db)):
-    return users_services.get_administrator_by_id(db)
+def get_administrator_by_id(id:int, db: Session = Depends(get_db)):
+    return users_services.get_administrator_by_id(db, administrator_id=id)
 
 @usersRoutes.post(f"{base}/customers/")
 def create_customer(customer: CustomerCreate, db: Session = Depends(get_db)):
     users_services.customer_create(db, customer)
-    pass
 
 @usersRoutes.post(f"{base}/administrators/")
 def create_administrators(administrator: AdministratorCreate, db: Session = Depends(get_db)):
