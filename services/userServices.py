@@ -23,7 +23,6 @@ def get_all_usersLogin(db: Session):
 def get_userLogin_by_id(db: Session, userLogin:int):
     return db.query(models.UserLogin).filter_by(id=userLogin).first()
 
-
 def customer_create(db: Session, customer: schemas.CustomerCreate):
     db_customer = models.Customer(**customer.model_dump())
     if db.query(models.Customer).filter_by(email=db_customer.email).first():
@@ -43,6 +42,7 @@ def customer_create(db: Session, customer: schemas.CustomerCreate):
             hashed_password=hashedPassword)
         db.add(userLogin)
         db.commit()
+
         db.refresh(userLogin)
         return {"success": True}
 
