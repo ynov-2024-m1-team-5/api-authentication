@@ -30,6 +30,7 @@ class Customer(UserBase):
     first_name: str
     last_name: str
     zipcode: str
+
     phone: str
     city: str
     

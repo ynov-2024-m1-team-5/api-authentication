@@ -34,6 +34,7 @@ def customer_create(db: Session, customer: schemas.CustomerCreate):
         hashedPassword = get_password_hash(db_customer.password)
         userLogin = models.UserLogin(customer_id=db_customer.id, hashed_password=hashedPassword)
         db.add(db_customer)
+
         db.commit()
 
         hashedPassword = get_password_hash(db_customer.password)
