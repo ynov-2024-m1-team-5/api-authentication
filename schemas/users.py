@@ -29,13 +29,14 @@ class Customer(UserBase):
     id: int
     first_name: str
     last_name: str
-    zipcode: int
+    zipcode: str
     phone: str
     city: str
     
 class AdministratorCreate(UserBase):
-    firstName: str
-    lastName: str
+    first_name: str
+    last_name: str
+    email: str
     password: str
 
 class Administrator(UserBase):

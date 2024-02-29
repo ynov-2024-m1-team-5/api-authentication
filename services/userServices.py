@@ -33,7 +33,8 @@ def customer_create(db: Session, customer: schemas.CustomerCreate):
     else:
         hashedPassword = get_password_hash(db_customer.password)
         userLogin = models.UserLogin(customer_id=db_customer.id, hashed_password=hashedPassword)
-        db.add(userLogin)
+        db.add(db_customer)
+
         db.commit()
 
         hashedPassword = get_password_hash(db_customer.password)
@@ -48,11 +49,26 @@ def customer_create(db: Session, customer: schemas.CustomerCreate):
 
 
 def administrator_create(db: Session, administrator: schemas.AdministratorCreate):
-    db_administrator = models.Administrator(**administrator.model_dump())
-    db.add(db_administrator)
-    db.commit()
-    db.refresh(db_administrator)
-    return db_administrator
+    if db.query(models.Administrator).filter_by(email=administrator.email).first():
+        raise HTTPException(
+            status_code=409,
+            detail="Email already exists",
+        )
+    else:
+        db_administrator = models.Administrator(
+            first_name=administrator.first_name,
+            last_name=administrator.last_name,
+            email=administrator.email)
+        db.add(db_administrator)
+        db.commit()
+        hashedPassword = get_password_hash(administrator.password)
+        adminLogin = models.AdminLogin(
+            admin_id=db_administrator.id,
+            password=hashedPassword) 
+        db.add(adminLogin)
+        db.commit()
+
+        return {"success": True}
 
 def update_customer(db: Session, customer_id: int, updated_data: schemas.CustomerUpdate):
     db_customer = db.query(models.Customer).filter(models.Customer.id == customer_id).first()
