@@ -52,7 +52,6 @@ def get_administrator_by_id(id:int, db: Session = Depends(get_db)):
 def create_customer(customer: CustomerCreate, db: Session = Depends(get_db)):
     return users_services.customer_create(db, customer)
 
-
 @usersRoutes.post(f"{base}/administrators/")
 def create_administrators(administrator: AdministratorCreate, db: Session = Depends(get_db)):
     users_services.administrator_create(db, administrator)
