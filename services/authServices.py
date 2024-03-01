@@ -17,7 +17,6 @@ def authenticate_user(db: Session, email: str, password: str):
         user = db.query(models.Administrator).filter_by(email=email).first()
         login = db.query(models.AdminLogin).filter_by(admin_id=user.id).first()
         hashed_password = login.password
-
         is_admin = True
     else:
         user = db.query(models.Customer).filter_by(email=email).first()
@@ -29,8 +28,6 @@ def authenticate_user(db: Session, email: str, password: str):
     if not verify_password(password, hashed_password):
         return {"detail": "Incorrect username or password"}
     return [login, is_admin]
-
-
 
 def create_access_token(data: dict, expires_delta: Optional[timedelta] = None):
     to_encode = data.copy()
