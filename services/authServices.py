@@ -17,7 +17,6 @@ def authenticate_user(db: Session, email: str, password: str):
         user = db.query(models.Administrator).filter_by(email=email).first()
         login = db.query(models.AdminLogin).filter_by(admin_id=user.id).first()
         hashed_password = login.password
-
         is_admin = True
     else:
         user = db.query(models.Customer).filter_by(email=email).first()
@@ -30,7 +29,6 @@ def authenticate_user(db: Session, email: str, password: str):
         return {"detail": "Incorrect username or password"}
     return [login, is_admin]
 
-
 def create_access_token(data: dict, expires_delta: Optional[timedelta] = None):
     to_encode = data.copy()
     if expires_delta:
@@ -42,7 +40,6 @@ def create_access_token(data: dict, expires_delta: Optional[timedelta] = None):
     return encoded_jwt
 
 def get_current_user(db, token: Annotated[str, Depends(oauth2_scheme)]):
-    print("hehreee")
     credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
         detail="Could not validate credentials",
