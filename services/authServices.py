@@ -28,7 +28,6 @@ def authenticate_user(db: Session, email: str, password: str):
         return False
     return login, is_admin
 
-
 def create_access_token(data: dict, expires_delta: Optional[timedelta] = None):
     to_encode = data.copy()
     if expires_delta:
