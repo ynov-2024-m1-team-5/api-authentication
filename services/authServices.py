@@ -16,17 +16,21 @@ def authenticate_user(db: Session, email: str, password: str):
     if not db.query(models.Customer).filter_by(email=email).first():
         user = db.query(models.Administrator).filter_by(email=email).first()
         login = db.query(models.AdminLogin).filter_by(admin_id=user.id).first()
+        hashed_password = login.password
+
         is_admin = True
     else:
         user = db.query(models.Customer).filter_by(email=email).first()
         login = db.query(models.UserLogin).filter_by(customer_id=user.id).first()
-        is_admin= False
+        is_admin = False
+        hashed_password = login.hashed_password 
     if not login:
-        return False
-    hashed_password = login.hashed_password or login.password
+        return {"detail": "Incorrect username or password"}
     if not verify_password(password, hashed_password):
-        return False
-    return login, is_admin
+        return {"detail": "Incorrect username or password"}
+    return [login, is_admin]
+
+
 
 def create_access_token(data: dict, expires_delta: Optional[timedelta] = None):
     to_encode = data.copy()

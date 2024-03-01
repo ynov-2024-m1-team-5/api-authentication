@@ -69,21 +69,28 @@ def update_customer(id: int, customer):
 def delete_customer(id: int, customer: CustomerDelete):
     pass
 
-@usersRoutes.post(f"{base}/token", response_model=Token)
+@usersRoutes.post(f"{base}/token")
 def login_for_access_token(db: Session = Depends(get_db), form_data: OAuth2PasswordRequestForm = Depends()):
-    userlogin, is_admin = auth_services.authenticate_user(db, form_data.username, form_data.password)
-    if not userlogin:
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Incorrect username or password",
-            headers={"WWW-Authenticate": "Bearer"},
+    res = auth_services.authenticate_user(db, form_data.username, form_data.password)
+    try:
+        if res["detail"]:
+            return res
+    except:
+        userlogin = res[0]
+        is_admin = res[1]
+        if not userlogin:
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="Incorrect username or password",
+                headers={"WWW-Authenticate": "Bearer"},
+            )
+        
+        access_token_expires = timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)
+        access_token = auth_services.create_access_token(
+            data={"sub": userlogin.id, "is_admin": is_admin}, expires_delta=access_token_expires
         )
-    
-    access_token_expires = timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)
-    access_token = auth_services.create_access_token(
-        data={"sub": userlogin.id, "is_admin": is_admin}, expires_delta=access_token_expires
-    )
-    return Token(access_token=access_token, token_type="bearer")
+        return Token(access_token=access_token, token_type="bearer")
+
 
 @usersRoutes.get(f"{base}/me/")
 def read_users_me(db: Session=Depends(get_db), current_user: UserLogin = Depends(auth_services.get_current_user)):
