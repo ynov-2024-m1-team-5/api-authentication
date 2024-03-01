@@ -28,3 +28,4 @@ def send_email(subject, content, recipients):
     except smtplib.SMTPException as e:
         print("Erreur lors de l'envoi de l'e-mail:", e)
         raise
+
