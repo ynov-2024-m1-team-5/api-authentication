@@ -3,7 +3,7 @@ import schemas.users as schemas
 import models.users as models
 from fastapi import HTTPException
 from services.utils import *
-
+from config.settings import settings
 
 def get_all_customers(db: Session):
     return db.query(models.Customer).all()
@@ -45,15 +45,36 @@ def customer_create(db: Session, customer: schemas.CustomerCreate):
         db.commit()
 
         db.refresh(userLogin)
+        # send_email(recipient=db_customer.email, 
+        #            subject="Creation account",
+        #            content="Congrats! You have created an account on our platform.")
+        # send_email(recipient=settings.EMAIL_FROM,
+        #            subject="New Customer",
+        #            content="New customer on the platform.")
         return {"success": True}
 
 
 def administrator_create(db: Session, administrator: schemas.AdministratorCreate):
-    db_administrator = models.Administrator(**administrator.model_dump())
-    db.add(db_administrator)
-    db.commit()
-    db.refresh(db_administrator)
-    return db_administrator
+    if db.query(models.Administrator).filter_by(email=administrator.email).first():
+        raise HTTPException(
+            status_code=409,
+            detail="Email already exists",
+        )
+    else:
+        db_administrator = models.Administrator(
+            first_name=administrator.first_name,
+            last_name=administrator.last_name,
+            email=administrator.email)
+        db.add(db_administrator)
+        db.commit()
+        hashedPassword = get_password_hash(administrator.password)
+        adminLogin = models.AdminLogin(
+            admin_id=db_administrator.id,
+            password=hashedPassword) 
+        db.add(adminLogin)
+        db.commit()
+
+        return {"success": True}
 
 def update_customer(db: Session, customer_id: int, updated_data: schemas.CustomerUpdate):
     db_customer = db.query(models.Customer).filter(models.Customer.id == customer_id).first()

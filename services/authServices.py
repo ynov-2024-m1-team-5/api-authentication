@@ -13,13 +13,20 @@ from fastapi.security import OAuth2PasswordBearer
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl=f"/api/v1/users/token")
 
 def authenticate_user(db: Session, email: str, password: str):
-    customer = db.query(models.Customer).filter_by(email=email).first()
-    userlogin = db.query(models.UserLogin).filter_by(customer_id=customer.id).first()
-    if not userlogin:
+    if not db.query(models.Customer).filter_by(email=email).first():
+        user = db.query(models.Administrator).filter_by(email=email).first()
+        login = db.query(models.AdminLogin).filter_by(admin_id=user.id).first()
+        is_admin = True
+    else:
+        user = db.query(models.Customer).filter_by(email=email).first()
+        login = db.query(models.UserLogin).filter_by(customer_id=user.id).first()
+        is_admin= False
+    if not login:
         return False
-    if not verify_password(password, userlogin.hashed_password):
+    hashed_password = login.hashed_password or login.password
+    if not verify_password(password, hashed_password):
         return False
-    return userlogin
+    return login, is_admin
 
 def create_access_token(data: dict, expires_delta: Optional[timedelta] = None):
     to_encode = data.copy()

@@ -30,13 +30,13 @@ class Customer(UserBase):
     first_name: str
     last_name: str
     zipcode: str
-
     phone: str
     city: str
     
 class AdministratorCreate(UserBase):
-    firstName: str
-    lastName: str
+    first_name: str
+    last_name: str
+    email: str
     password: str
 
 class Administrator(UserBase):
