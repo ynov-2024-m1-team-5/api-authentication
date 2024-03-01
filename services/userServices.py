@@ -3,7 +3,7 @@ import schemas.users as schemas
 import models.users as models
 from fastapi import HTTPException
 from services.utils import *
-
+from config.settings import settings
 
 def get_all_customers(db: Session):
     return db.query(models.Customer).all()
@@ -45,6 +45,12 @@ def customer_create(db: Session, customer: schemas.CustomerCreate):
         db.commit()
 
         db.refresh(userLogin)
+        # send_email(recipient=db_customer.email, 
+        #            subject="Creation account",
+        #            content="Congrats! You have created an account on our platform.")
+        # send_email(recipient=settings.EMAIL_FROM,
+        #            subject="New Customer",
+        #            content="New customer on the platform.")
         return {"success": True}
 
 
