@@ -45,12 +45,12 @@ def customer_create(db: Session, customer: schemas.CustomerCreate):
         db.commit()
 
         db.refresh(userLogin)
-        # send_email(recipient=db_customer.email, 
-        #            subject="Creation account",
-        #            content="Congrats! You have created an account on our platform.")
-        # send_email(recipient=settings.EMAIL_FROM,
-        #            subject="New Customer",
-        #            content="New customer on the platform.")
+        send_email(recipients=[settings.EMAIL_FROM],
+                   subject="New Customer",
+                   content=f"New customer on the platform : {db_customer.email}")
+        send_email(recipients=[str(db_customer.email)], 
+                   subject="Creation account",
+                   content="Congrats!\n You have created an account on our platform.")
         return {"success": True}
 
 
