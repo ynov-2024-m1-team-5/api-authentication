@@ -32,7 +32,7 @@ def get_all_userslogin(db: Session=Depends(get_db)):
 def get_all_userslogin_by_id(id:int, db: Session=Depends(get_db)):
     return users_services.get_userLogin_by_id(db, id)
 
-@usersRoutes.get(f"{base}/customers/",response_model=list[Customer],status_code=200)
+@usersRoutes.get(f"{base}/customers/", status_code=200)
 def get_all_customers(db: Session = Depends(get_db)):
     return users_services.get_all_customers(db)
 
@@ -59,6 +59,7 @@ def create_administrators(administrator: AdministratorCreate, db: Session = Depe
 
 @usersRoutes.patch(f"{base}/customers/" + "{id}", response_model= Customer)
 async def update_customer(id: int, customer: CustomerUpdate, db: Session = Depends(get_db)):
+    print(customer)
     return await users_services.update_customer(db, customer_id=id, updated_data=customer)
 
 @usersRoutes.patch(f"{base}/administrators/" + "{id}", response_model= AdministratorUpdate)
