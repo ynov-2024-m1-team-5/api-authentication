@@ -76,7 +76,7 @@ def administrator_create(db: Session, administrator: schemas.AdministratorCreate
 
         return {"success": True}
 
-def update_customer(db: Session, customer_id: int, updated_data: schemas.CustomerUpdate):
+async def update_customer(db: Session, customer_id: int, updated_data: schemas.CustomerUpdate):
     db_customer = db.query(models.Customer).filter(models.Customer.id == customer_id).first()
     if db_customer:
         for key, value in updated_data.model_dump().items():
