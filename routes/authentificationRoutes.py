@@ -93,7 +93,6 @@ def login_for_access_token(db: Session = Depends(get_db), form_data: OAuth2Passw
         return Token(access_token=access_token, token_type="bearer")
 
 
-
 @usersRoutes.get(f"{base}/me/")
 def read_users_me(token:str, db: Session=Depends(get_db)):
     return auth_services.get_current_user(db, token)
