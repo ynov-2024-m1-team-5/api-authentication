@@ -59,7 +59,6 @@ def create_administrators(administrator: AdministratorCreate, db: Session = Depe
 
 @usersRoutes.patch(f"{base}/customers/" + "{id}", response_model= Customer)
 async def update_customer(id: int, customer: CustomerUpdate, db: Session = Depends(get_db)):
-    print(customer)
     return await users_services.update_customer(db, customer_id=id, updated_data=customer)
 
 @usersRoutes.patch(f"{base}/administrators/" + "{id}", response_model= AdministratorUpdate)
