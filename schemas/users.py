@@ -1,5 +1,5 @@
 from pydantic import BaseModel
-
+from typing import Optional
 class BaseModelExtend(BaseModel):
     class Config:
         from_attributes = True
@@ -23,8 +23,11 @@ class CustomerCreateOut(UserBase):
     pass
 
 class CustomerUpdate(CustomerCreate):
-    id: int
-
+    first_name: Optional[str]
+    last_name: Optional[str]
+    zipcode: Optional[str]
+    phone: Optional[str]
+    city: Optional[str]
 class Customer(UserBase):
     id: int
     first_name: str
