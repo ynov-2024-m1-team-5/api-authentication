@@ -66,9 +66,9 @@ async def update_customer(id: int, customer: CustomerUpdate, db: Session = Depen
 def update_customer(id: int, customer):
     pass
 
-@usersRoutes.delete(f"{base}/customers"+"/{id}")
-def delete_customer(id: int, customer: CustomerDelete):
-    pass
+@usersRoutes.delete(f"{base}/customers/"+ "{id}")
+def delete_customer(id: int, db: Session = Depends(get_db)):
+    return users_services.delete_customer(db=db, customer_delete_id=id)
 
 @usersRoutes.post(f"{base}/token")
 def login_for_access_token(db: Session = Depends(get_db), form_data: OAuth2PasswordRequestForm = Depends()):
