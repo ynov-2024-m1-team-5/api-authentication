@@ -4,8 +4,8 @@ import models.users as models
 from fastapi import HTTPException
 from services.utils import *
 from config.settings import settings
-import services.authentificationServices as auth_service
-from jose import jwt
+import services.authServices as auth_service
+from jose import jwt, exceptions 
 
 def get_all_customers(db: Session):
     return db.query(models.Customer).all()
@@ -98,15 +98,14 @@ def update_administrator(db: Session, administrator_id: int, updated_data: schem
         return db_administrator
     return None
 
-def delete_customer(db: Session, customer_delete_id: int):
-    # customer_id = customerDelete.userLogin_id
-    # token = customerDelete.token
-    # payload = jwt.decode(str(token), settings.SECRET_KEY, algorithms=settings.ALGORITHM, subject="sub")
-    # print(payload)
-    # if auth_service.get_current_user(db, customerDelete.token):
-    db_customer = db.query(models.Customer).filter(models.Customer.id == customer_delete_id).first()
-    if db_customer:
-        db.delete(db_customer)
-        db.commit()
-        return True
+def delete_customer(customerDelete: schemas.CustomerDelete, db: Session):
+    customer_delete_id = customerDelete.userLogin_id
+    token = customerDelete.token
+    payload = jwt.decode(token, settings.SECRET_KEY, algorithms=[settings.ALGORITHM])
+    if payload.get("is_admin"):
+        db_customer = db.query(models.Customer).filter(models.Customer.id == customer_delete_id).first()
+        if db_customer:
+            db.delete(db_customer)
+            db.commit()
+            return True
     return False
