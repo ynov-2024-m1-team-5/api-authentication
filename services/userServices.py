@@ -7,6 +7,7 @@ from config.settings import settings
 import services.authServices as auth_service
 from jose import jwt, exceptions 
 
+
 def get_all_customers(db: Session):
     return db.query(models.Customer).all()
 

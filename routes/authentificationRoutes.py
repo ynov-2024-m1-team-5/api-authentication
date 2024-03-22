@@ -69,6 +69,7 @@ def update_customer(id: int, customer):
 def delete_customer(customerDelete: CustomerDelete, db: Session = Depends(get_db)):
     return users_services.delete_customer(db=db, customerDelete=customerDelete)
 
+
 @usersRoutes.post(f"{base}/token")
 def login_for_access_token(db: Session = Depends(get_db), form_data: OAuth2PasswordRequestForm = Depends()):
     res = auth_services.authenticate_user(db, form_data.username, form_data.password)
