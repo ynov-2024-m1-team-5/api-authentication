@@ -66,8 +66,9 @@ def update_customer(id: int, customer):
     pass
 
 @usersRoutes.delete(f"{base}/customers/"+ "{id}")
-def delete_customer(id: int, db: Session = Depends(get_db)):
-    return users_services.delete_customer(db=db, customer_delete_id=id)
+def delete_customer(customerDelete: CustomerDelete, db: Session = Depends(get_db)):
+    return users_services.delete_customer(db=db, customerDelete=customerDelete)
+
 
 @usersRoutes.post(f"{base}/token")
 def login_for_access_token(db: Session = Depends(get_db), form_data: OAuth2PasswordRequestForm = Depends()):
@@ -87,11 +88,12 @@ def login_for_access_token(db: Session = Depends(get_db), form_data: OAuth2Passw
         
         access_token_expires = timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)
         access_token = auth_services.create_access_token(
-            data={"sub": userlogin.id, "is_admin": is_admin}, expires_delta=access_token_expires
+            data={"sub": str(userlogin.id), "is_admin": is_admin}, expires_delta=access_token_expires
         )
         return Token(access_token=access_token, token_type="bearer")
 
 
+
 @usersRoutes.get(f"{base}/me/")
-def read_users_me(db: Session=Depends(get_db), current_user: UserLogin = Depends(auth_services.get_current_user)):
-    return current_user
+def read_users_me(token:str, db: Session=Depends(get_db)):
+    return auth_services.get_current_user(db, token)
