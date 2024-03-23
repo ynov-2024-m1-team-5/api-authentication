@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, status, Header
 from services import userServices as users_services
 import services.authServices as auth_services
 from sqlalchemy.orm import Session
@@ -9,6 +9,7 @@ from schemas.token import *
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from datetime import datetime, timedelta
 from config.settings import settings
+from typing import Union, Annotated
 
 Base.metadata.create_all(bind=engine)
 
@@ -94,5 +95,5 @@ def login_for_access_token(db: Session = Depends(get_db), form_data: OAuth2Passw
 
 
 @usersRoutes.get(f"{base}/me/")
-def read_users_me(token:str, db: Session=Depends(get_db)):
-    return auth_services.get_current_user(db, token)
+def read_users_me(token:Annotated[Union[str, None], Header()] = None, db: Session=Depends(get_db)):
+    return auth_services.get_current_user(token=token, db=db)
