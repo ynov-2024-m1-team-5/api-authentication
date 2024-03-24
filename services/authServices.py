@@ -47,16 +47,18 @@ def get_current_user(db, token: Annotated[str, Depends(oauth2_scheme)]):
     )
     try:
         payload = jwt.decode(token=token, key=settings.SECRET_KEY, algorithms=settings.ALGORITHM)
-        username: str = payload.get("sub")
-        if username is None:
+        userlogin_id: str = payload.get("sub")
+        if userlogin_id is None:
             raise credentials_exception
         # token_data = TokenData(username=username)
     except JWTError:
         raise credentials_exception
     if payload.get("is_admin"):
-        user = db.query(models.Administrator).filter_by(id=payload["sub"]).first()
+        customer_id = db.query(models.AdminLogin).filter_by(id=int(userlogin_id)).first().admin_id
+        user = db.query(models.Administrator).filter_by(id=customer_id).first()
     else:
-        user = db.query(models.Customer).filter_by(id=payload["sub"]).first()
+        customer_id = db.query(models.UserLogin).filter_by(id=int(userlogin_id)).first().customer_id
+        user = db.query(models.Customer).filter_by(id=customer_id).first()
     if user is None:
         raise credentials_exception
     return user
