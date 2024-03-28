@@ -54,7 +54,7 @@ def customer_create(db: Session, customer: schemas.CustomerCreate):
         send_email(recipients=[str(db_customer.email)], 
                    subject="Creation account",
                    content="Congrats!\n You have created an account on our platform.")
-        return {"success": True}
+        return {"success": True, "customer_id": db_customer.id, "user_login": userLogin.id}
 
 
 def administrator_create(db: Session, administrator: schemas.AdministratorCreate):
