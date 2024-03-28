@@ -81,6 +81,7 @@ def login_for_access_token(db: Session = Depends(get_db), form_data: OAuth2Passw
     except:
         userlogin = res[0]
         is_admin = res[1]
+        customer = res[2]
         if not userlogin:
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,
@@ -90,7 +91,7 @@ def login_for_access_token(db: Session = Depends(get_db), form_data: OAuth2Passw
         
         access_token_expires = timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)
         access_token = auth_services.create_access_token(
-            data={"sub": str(userlogin.id), "is_admin": is_admin}, expires_delta=access_token_expires
+            data={"sub": str(userlogin.id), "is_admin": is_admin, "customer_id": customer.id}, expires_delta=access_token_expires
         )
         return Token(access_token=access_token, token_type="bearer")
 
@@ -99,5 +100,3 @@ def login_for_access_token(db: Session = Depends(get_db), form_data: OAuth2Passw
 @usersRoutes.get(f"{base}/me/")
 def read_users_me(token:Annotated[Union[str, None], Header()] = None, db: Session=Depends(get_db)):
     return auth_services.get_current_user(token=token, db=db)
-
-
