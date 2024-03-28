@@ -27,7 +27,7 @@ def authenticate_user(db: Session, email: str, password: str):
         return {"detail": "Incorrect username or password"}
     if not verify_password(password, hashed_password):
         return {"detail": "Incorrect username or password"}
-    return [login, is_admin]
+    return [login, is_admin, user]
 
 def create_access_token(data: dict, expires_delta: Optional[timedelta] = None):
     to_encode = data.copy()
