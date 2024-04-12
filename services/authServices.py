@@ -13,20 +13,28 @@ from fastapi.security import OAuth2PasswordBearer
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl=f"/api/v1/users/token")
 
 def authenticate_user(db: Session, email: str, password: str):
-    if not db.query(models.Customer).filter_by(email=email).first():
-        user = db.query(models.Administrator).filter_by(email=email).first()
-        login = db.query(models.AdminLogin).filter_by(admin_id=user.id).first()
-        hashed_password = login.password
-        is_admin = True
-    else:
-        user = db.query(models.Customer).filter_by(email=email).first()
+    customer = db.query(models.Customer).filter_by(email=email).first()
+    administrator = db.query(models.Administrator).filter_by(email=email).first()
+    is_admin = True
+    if customer:
+        user = customer
         login = db.query(models.UserLogin).filter_by(customer_id=user.id).first()
         is_admin = False
-        hashed_password = login.hashed_password 
-    if not login:
-        return {"detail": "Incorrect username or password"}
+    elif administrator:
+        user = administrator
+        login = db.query(models.AdminLogin).filter_by(admin_id=user.id).first()
+    else:
+        return {
+            "status_code": 401,
+            "detail": "Incorrect username or password"
+        }
+    hashed_password = login.hashed_password
     if not verify_password(password, hashed_password):
-        return {"detail": "Incorrect username or password"}
+        return {
+            "status_code": 401,
+            "detail": "Incorrect username or password"
+        }
+
     return [login, is_admin, user]
 
 def create_access_token(data: dict, expires_delta: Optional[timedelta] = None):

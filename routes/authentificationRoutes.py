@@ -76,26 +76,20 @@ def delete_customer(customerDelete: CustomerDelete, db: Session = Depends(get_db
 def login_for_access_token(db: Session = Depends(get_db), form_data: OAuth2PasswordRequestForm = Depends()):
     res = auth_services.authenticate_user(db, form_data.username, form_data.password)
     try:
-        if res["detail"]:
-            return res
-    except:
         userlogin = res[0]
         is_admin = res[1]
         customer = res[2]
-        if not userlogin:
-            raise HTTPException(
-                status_code=status.HTTP_401_UNAUTHORIZED,
-                detail="Incorrect username or password",
-                headers={"WWW-Authenticate": "Bearer"},
-            )
-        
         access_token_expires = timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)
         access_token = auth_services.create_access_token(
             data={"sub": str(userlogin.id), "is_admin": is_admin, "customer_id": customer.id}, expires_delta=access_token_expires
         )
         return Token(access_token=access_token, token_type="bearer")
-
-
+    except:
+        return HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Incorrect username or password",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
 
 @usersRoutes.get(f"{base}/me/")
 def read_users_me(token:Annotated[Union[str, None], Header()] = None, db: Session=Depends(get_db)):
